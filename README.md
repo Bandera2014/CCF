@@ -325,32 +325,7 @@ Sometimes, when trying to run a website locally, your web browser may give a "CO
 		    
 This happens almost only when hosting a website locally, i.e. opening an html file in your browser.
 		    
-To bypass this, you will need to use firefox. 
-Open firefox's "Advanced Preferences" setting by typing ***about:config*** into a new tab.
-		    
-You will now see a warning message as follows:
-		    
-<img src="images/caution.png"></img>
-		
-Go ahead and click "accept the risk". I promise its safe.
-		
-Now you should see a page like this:
-		
-<img src="images/config_landing.png"></img>
-	    
-If you don't see this, you've done something wrong.
-	    
-Now in the search box type "file_unique_origin".
-	    
-<img src="images/unique_origin.png"></img>
-	
-This should pop up:
-	
-<img src="images/privacy.png"></img>
-
-The middle option should say "true". Click the button on the very right <img src="images/button.png"></img> to make it "false".
-
-Now simply exit the tab and the error should be fixed.
+To bypass this you can use an extension in VS Code called "Live Server" by Ritwick Dey. Once installed hit "Go Live" in the bottom right and it should open the current file in your browser without the CORS errors.
 
 ## Creating an object from the Firebase
 
