@@ -1,1 +1,3 @@
-/python/private/*
+/python/private
+/python/build
+/python/dist
