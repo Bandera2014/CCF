@@ -11,7 +11,7 @@ const firebaseConfig = {
     appId: "1:513234627322:web:bb29fecd5ceeea674b3743",
     measurementId: "G-1GKEYRGJXZ",
     databaseURL: "https://sictc-career-fair-default-rtdb.firebaseio.com/"
-    };
+};
 
 //initializing the firebase with our config
 firebase.initializeApp(firebaseConfig);
@@ -22,20 +22,20 @@ var database = firebase.database();
 //modifying String's prototype in order to add python-like formatting - i love stack overflow
 //literally making a function for the String class
 if (!String.prototype.format) {
-    String.prototype.format = function() {
+    String.prototype.format = function () {
         var args = arguments;
-        return this.replace(/{(\d+)}/g, function(match, number) { 
+        return this.replace(/{(\d+)}/g, function (match, number) {
             return typeof args[number] != 'undefined'
                 ? args[number]
                 : match
-            ;
+                ;
         });
     };
 }
 
 //four functions for filtering
 //script will run addAll() by default, but when a filter button is clicked it resets the body and uses an if statement to only pass in colleges,companies,etc to addCard()
-function addAll(){
+async function addAll() {
     //call database catagory (reference) "Items" and on a changed value take a snapshot, then:
     database.ref("Items").on('value', (snapshot) => {
         //call the HTML document and get element with id "body-output" (body), set the HTML code to "" (resets the body to prevent duplication)
@@ -45,95 +45,147 @@ function addAll(){
         //variable items = the values of data, which is all of the individual dictionaries in the "Items" catagory on firebase - AKA each college/company
         var items = Object.values(data);
         //for each object "l" in items (each item with the weird looking names - each college/company)
-        for (let l in items){
+        for (let l in items) {
             //pass each individual college/company (each dictionary) into addCard, which builds out the html
             addCard(items[l]);
         }
     });
 }
 //same function just with an if statement to only pass in colleges
-function addColleges(){
+function addColleges() {
     database.ref("Items").on('value', (snapshot) => {
         document.getElementById("body-output").innerHTML = "";
         const data = snapshot.val();
         var items = Object.values(data);
-        for (let l in items){
-            if (items[l]["type"]==="College"){
+        for (let l in items) {
+            if (items[l]["type"] === "College") {
                 addCard(items[l]);
             }
         }
     });
 }
 
-function addCompanies(){
+function addCompanies() {
     database.ref("Items").on('value', (snapshot) => {
         document.getElementById("body-output").innerHTML = "";
         const data = snapshot.val();
         var items = Object.values(data);
-        for (let l in items){
-            if (items[l]["type"]==="Company"){
+        for (let l in items) {
+            if (items[l]["type"] === "Company") {
                 addCard(items[l]);
             }
         }
     });
 }
 
-function addMilitary(){
+function addMilitary() {
     database.ref("Items").on('value', (snapshot) => {
         document.getElementById("body-output").innerHTML = "";
         const data = snapshot.val();
         var items = Object.values(data);
-        for (let l in items){
-            if (items[l]["type"]==="Military"){
+        for (let l in items) {
+            if (items[l]["type"] === "Military") {
                 addCard(items[l]);
             }
         }
     });
 }
+
+
+function addinterest(intrest) {
+    let content=false
+    database.ref("Items").on('value', (snapshot) => {
+        document.getElementById("body-output").innerHTML = "";
+        const data = snapshot.val();
+        var items = Object.values(data);
+        for (let l in items) {
+            // checks what you searched if its in the name intrest areas and desc if it is add to add card else skip and check other one 
+            if (items[l]["ia1"] === intrest || items[l]["ia2"] === intrest || items[l]["ia3"] === intrest || items[l]["ia4"] === intrest || items[l]["name"].toLowerCase().includes(intrest) || items[l]["desc"].toLowerCase().includes(intrest)) {
+                addCard(items[l]);
+                content=true
+            }
+            
+        }
+        // if no resalts are found then show this page saying try anouther search
+        if (content===false){
+            document.getElementById("body-output").innerHTML ="<h1 style=color:grey>Sorry nothing found with that search.</h1><img width=15% src=https://creazilla-store.fra1.digitaloceanspaces.com/cliparts/1410400/rubber-duck-clipart-xl.png>";
+
+            // addCard(items[])
+        // window.open("https://"+document.getElementById("ui").value+".github.io/", '_blank')
+    }
+    });
+
+
+// if(document.getElementById("ui").value.toLowerCase() == "nathan"){window.open("https://natebrant.github.io/", '_blank');}
+
+}
+
+
 //run addAll() by default
-addAll();
-
+await addAll();
+let test = "test"
 //https://www.w3schools.com/jsref/event_onclick.asp
 //these are basically if statements or "onClickListeners" if you will
-document.getElementById("allbutton").onclick = function() {addAll()};
-document.getElementById("collegesbutton").onclick = function() {addColleges()};
-document.getElementById("companiesbutton").onclick = function() {addCompanies()};
-document.getElementById("militarybutton").onclick = function() {addMilitary()};
+document.getElementById("allbutton").onclick = function () { addAll() };
+document.getElementById("collegesbutton").onclick = function () { addColleges() };
+document.getElementById("companiesbutton").onclick = function () { addCompanies() };
+document.getElementById("militarybutton").onclick = function () { addMilitary() };
+document.getElementById("Construction").onclick = function () { addinterest("Construction") };
+document.getElementById("Engineering").onclick = function () { addinterest("Engineering") };
+document.getElementById("Manufacturing").onclick = function () { addinterest("Manufacturing") };
+document.getElementById("Healthsciences").onclick = function () { addinterest("Health Sciences") };
+document.getElementById("ComputerTechnology").onclick = function () { addinterest("Computer Technology") };
+document.getElementById("search").onclick = function () { addinterest((document.getElementById("ui").value).toLowerCase())};
 
 
+// adds a event to lisen if enter is clicked when it is it will search the page becuase its annoying to have to type then click search button
+document.onkeydown = function (e) {
+    e = e || window.event;
+    switch (e.which || e.keyCode) {
+          case 13 : addinterest((document.getElementById("ui").value).toLowerCase())
+              break;
+    }
+  }
+
+
+//  addinterest(prompt(document.getElementById("ui").innerText))
+// function sortInterest(interest){addinterest(interest)} 
 //the addCard function takes in "l" which would be a list and uses it to build out each card 
-function addCard(l){
+async function addCard(l) {
+
     //getting the body's previous information
     var prevDiv = document.getElementById("body-output").innerHTML;
 
     var div = `
     <div class="card mb-3" style="max-width: 75%;" align="left">
-        <div class="row g-0">
-            <div class="col-md-2">
-                <img src="{0}" class="img-fluid rounded-start" style="padding:10px;" alt="{1} logo" >
-            </div>
+    <div class="row g-0">
+    <div class="col-md-2">
+    <img src="{0}" class="img-fluid rounded-start" style="padding:10px;" alt="{1} logo" >
+    </div>
             <div class="col-md-7">
-                <div class="card-body">
-                    <h5 class="card-title" style="font-size: 27px;">{1}</h5>
-                    <div class="card-body">`.format(l["logo"],l["name"]);
+            <div class="card-body">
+            <h5 class="card-title" style="font-size: 27px;">{1}</h5>
+            <div class="card-body">`.format(l["logo"], l["name"]);
 
-    if (l["type"]==="College"){
-        div = div + `<a href="{0}" class="btn btn-danger">{1} Website</a>`.format(l["web"],l["name"]);
-    } else if (l["type"]==="Company"){
-        div = div + `<a href="{0}" class="btn btn-primary">{1} Website</a>`.format(l["web"],l["name"]);
+    if (l["type"] === "College") {
+        div = div + `<a href="{0}" class="btn btn-danger">{1} Website</a>`.format(l["web"], l["name"]);
+    } else if (l["type"] === "Company") {
+        div = div + `<a href="{0}" class="btn btn-primary">{1} Website</a>`.format(l["web"], l["name"]);
     } else {
-        div = div + `<a href="{0}" class="btn btn-success">{1} Website</a>`.format(l["web"],l["name"]);
+        div = div + `<a href="{0}" class="btn btn-success">{1} Website</a>`.format(l["web"], l["name"]);
     }
-        
+
     div = div + `   </div>
-                    <p class="card-text">{0}</p>
+    <p class="card-text">{0}</p>
                 </div>
             </div>
             <div class="col-md-3" align="center" style="padding-right:15px;padding-left:15px;">
-                <div class="card-body">
-                    <p class="card-text">Interest Areas:</p>
-                </div> 
+            <div class="card-body">
+            <p class="card-text">Interest Areas:</p>
+            </div> 
                 <ul class="list-group list-group-flush">`.format(l["desc"]);
+
+
     //adding to div depending on how many interest areas are blank
     //will make this smaller is a final version
     if (l["ia2"]==="" && l["ia3"]==="" && l["ia4"]==="" && l["ia5"]===""){
@@ -157,8 +209,22 @@ function addCard(l){
                     <li class="list-group-item">{3}</li> 
                     <li class="list-group-item">{4}</li>`.format(l["ia1"],l["ia2"],l["ia3"],l["ia4"],l["ia5"]);
     }
-
     div = div + `</ul></div></div></div>`;
     //adding the new information to the previous information and putting it into the body
     document.getElementById("body-output").innerHTML = prevDiv + div;
+    // document.onclick=sortInterest(1)
 }
+
+// jquerry to add function to a button that shows up when you scroll down a bit that wil take you back to the top of the screen
+$(window).scroll(function() {
+    if ($(this).scrollTop() >= 50) {       
+        $('.return-to-top').fadeIn(250);
+    } else {
+        $('.return-to-top').fadeOut(250);  
+    }
+});
+$('.return-to-top').click(function() {      
+    $('body,html').animate({
+        scrollTop : 0                       
+    }, 100);
+});
