@@ -1,4 +1,4 @@
-from tkinter import Button, OptionMenu, StringVar, Text, Tk, Label
+from tkinter import Button, Listbox, OptionMenu, StringVar, Text, Tk, Label, messagebox
 from PIL import Image, ImageTk
 from classes.firebase import FirebaseClass
 import sys
@@ -6,13 +6,13 @@ import sys
 class WindowClass:
     def __init__(self):
         self.firebase = FirebaseClass()
+        self.tk = Tk()
         self.remember = []
         self.startup()
+        self.showItems()
         self.tk.mainloop()
     
     def startup(self):
-        self.tk = Tk()
-        self.type = StringVar(value="College")
         self.tk.title("CCF Manager")
         self.tk.resizable(False,False)
         #https://stackoverflow.com/questions/14900510/changing-the-application-and-taskbar-icon-python-tkinter
@@ -30,6 +30,9 @@ class WindowClass:
         self.img = ImageTk.PhotoImage(self.img.resize([self.img.size[0]//15,self.img.size[1]//15]))
         self.addToGrid(Label(self.tk,image=self.img,bg="black"),0,0,3)
         self.addToGrid(Label(self.tk,text="College Career Fair Manager",bg="black",fg="white",font=("ArialBold",15)),1,0,3)
+    
+    def addItem(self):
+        self.type = StringVar(value="College")
         self.addToGrid(Label(self.tk,text="Name"),2,0)
         self.addToGridRemember("name",Text(self.tk,height=3),2,1)
         self.addToGrid(Label(self.tk,text="Logo URL"),3,0)
@@ -44,7 +47,32 @@ class WindowClass:
             self.addToGridRemember(f"ia{i+1}",Text(self.tk,height=3),7+i,1)
         self.addToGrid(Label(self.tk,text="Type"),998,0)
         self.addToGrid(OptionMenu(self.tk,self.type,*["College","Company","Military"]),998,1,2)
-        self.addToGrid(Button(self.tk,text="Submit",bg="darkgreen",fg="lime",command=self.submit),999,0,3) #Not counting this out.
+        self.addToGrid(Button(self.tk,text="Submit",bg="darkgreen",fg="lime",command=self.submit),999,0,3)
+        self.addToGrid(Button(self.tk,text="Item List",bg="black",fg="yellow",command=lambda:self.newWindow(self.showItems)),1000,0,3)
+
+    def newWindow(self,fun):
+        self.remember = []
+        for widget in self.tk.winfo_children():
+            widget.destroy()
+        self.startup()
+        fun()
+    
+    def select(self,evt):
+        #https://www.geeksforgeeks.org/how-to-create-a-pop-up-message-when-a-button-is-pressed-in-python-tkinter/
+        if messagebox.askyesno(title="Are you sure?",message=f"Delete {evt.widget.get(evt.widget.curselection()[0])}?"):
+            FirebaseClass.delItemFromIndex(evt.widget.curselection()[0])
+            self.newWindow(self.showItems)
+
+    def showItems(self):
+        #https://www.tutorialspoint.com/python/tk_listbox.htm
+        items = FirebaseClass.getItems()
+        listBar = Listbox(self.tk,width=70,height=35)
+        for i in items:
+            listBar.insert("end",i)
+        #https://stackoverflow.com/questions/6554805/getting-a-callback-when-a-tkinter-listbox-selection-is-changed
+        listBar.bind('<<ListboxSelect>>', self.select)
+        self.addToGrid(listBar,2,0)
+        self.addToGrid(Button(self.tk,text="Add Card",bg="black",fg="yellow",command=lambda:self.newWindow(self.addItem)),3,0)
 
     def addToGridRemember(self,name,widget,row,column,columnspan=1,sticky="news"):
         self.remember.append([name,widget])
