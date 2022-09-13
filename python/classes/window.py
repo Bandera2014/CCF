@@ -1,4 +1,5 @@
 from tkinter import Button, Listbox, OptionMenu, StringVar, Text, Tk, Label, messagebox
+from tkinter import filedialog
 from PIL import Image, ImageTk
 from classes.firebase import FirebaseClass
 import sys
@@ -30,25 +31,57 @@ class WindowClass:
         self.img = ImageTk.PhotoImage(self.img.resize([self.img.size[0]//15,self.img.size[1]//15]))
         self.addToGrid(Label(self.tk,image=self.img,bg="black"),0,0,3)
         self.addToGrid(Label(self.tk,text="College Career Fair Manager",bg="black",fg="white",font=("ArialBold",15)),1,0,3)
-    
+
     def addItem(self):
         self.type = StringVar(value="College")
-        self.addToGrid(Label(self.tk,text="Name"),2,0)
-        self.addToGridRemember("name",Text(self.tk,height=3),2,1)
-        self.addToGrid(Label(self.tk,text="Logo URL"),3,0)
-        self.addToGridRemember("logo",Text(self.tk,height=3),3,1)
-        self.addToGrid(Label(self.tk,text="Website URL"),4,0)
-        self.addToGridRemember("web",Text(self.tk,height=3),4,1)
-        self.addToGrid(Label(self.tk,text="Description"),5,0)
-        self.addToGridRemember("desc",Text(self.tk,height=3),5,1)
-        self.addToGrid(Label(self.tk,text="Interest Areas"),6,0,3)
+        #https://www.pythontutorial.net/tkinter/tkinter-open-file-dialog/
+        self.addToGrid(Button(self.tk,text="Load from CSV",bg="darkgreen",fg="lime",command=lambda:self.select_file()),2,0,3)
+        self.addToGrid(Label(self.tk,text="Name"),3,0)
+        self.addToGridRemember("name",Text(self.tk,height=3),3,1)
+        self.addToGrid(Label(self.tk,text="Logo URL"),4,0)
+        self.addToGridRemember("logo",Text(self.tk,height=3),4,1)
+        self.addToGrid(Label(self.tk,text="Website URL"),5,0)
+        self.addToGridRemember("web",Text(self.tk,height=3),5,1)
+        self.addToGrid(Label(self.tk,text="Description"),6,0)
+        self.addToGridRemember("desc",Text(self.tk,height=3),6,1)
+        self.addToGrid(Label(self.tk,text="Interest Areas"),7,0,3)
         for i in range(5):
-            self.addToGrid(Label(self.tk,text=i+1),7+i,0)
-            self.addToGridRemember(f"ia{i+1}",Text(self.tk,height=3),7+i,1)
+            self.addToGrid(Label(self.tk,text=i+1),8+i,0)
+            self.addToGridRemember(f"ia{i+1}",Text(self.tk,height=3),8+i,1)
         self.addToGrid(Label(self.tk,text="Type"),998,0)
         self.addToGrid(OptionMenu(self.tk,self.type,*["College","Company","Military"]),998,1,2)
         self.addToGrid(Button(self.tk,text="Submit",bg="darkgreen",fg="lime",command=self.submit),999,0,3)
         self.addToGrid(Button(self.tk,text="Item List",bg="black",fg="yellow",command=lambda:self.newWindow(self.showItems)),1000,0,3)
+
+    def select_file(self):
+        file = filedialog.askopenfile(title='Open a file',initialdir='/',filetypes=(('tsv', '*.tsv'),('All files', '*.*')))
+        data = open(file.name,encoding="utf-8").read().split("\n")
+        for i in data:
+            if i.startswith("Name of Organization"):
+                continue
+            i = i.split('\t')
+            if len(i) == 1:
+                continue
+            #Name of Organization,Interest Area,Desc,picture url,website,college/company/military,Completed?,On Website
+            #0 Name, 3 Logo URL, 4 Website, 2 Desc, 1 Interests, 5 Type
+            tempdata=[]
+            tempdata.append(i[0])
+            tempdata.append(i[3])
+            tempdata.append(i[4])
+            tempdata.append(i[2])
+            for interest in i[1].split(","):
+                if interest == "x":
+                    continue
+                tempdata.append(interest)
+            self.type.set(i[5])
+            print(tempdata)
+            for j in range(len(tempdata)):
+                try:
+                    self.remember[j][1].delete( 1.0, "end")
+                    self.remember[j][1].insert("end",tempdata[j])
+                except:
+                    pass
+            break
 
     def newWindow(self,fun):
         self.remember = []
@@ -71,8 +104,8 @@ class WindowClass:
             listBar.insert("end",i)
         #https://stackoverflow.com/questions/6554805/getting-a-callback-when-a-tkinter-listbox-selection-is-changed
         listBar.bind('<<ListboxSelect>>', self.select)
-        self.addToGrid(listBar,2,0)
-        self.addToGrid(Button(self.tk,text="Add Card",bg="black",fg="yellow",command=lambda:self.newWindow(self.addItem)),3,0)
+        self.addToGrid(listBar,3,0)
+        self.addToGrid(Button(self.tk,text="Add Card",bg="black",fg="yellow",command=lambda:self.newWindow(self.addItem)),4,0)
 
     def addToGridRemember(self,name,widget,row,column,columnspan=1,sticky="news"):
         self.remember.append([name,widget])
