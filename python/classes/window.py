@@ -35,7 +35,7 @@ class WindowClass:
     def addItem(self):
         self.type = StringVar(value="College")
         #https://www.pythontutorial.net/tkinter/tkinter-open-file-dialog/
-        self.addToGrid(Button(self.tk,text="Load from CSV",bg="darkgreen",fg="lime",command=lambda:self.select_file()),2,0,3)
+        self.addToGrid(Button(self.tk,text="Clear Firebase and Upload TSV",bg="black",fg="red",command=lambda:self.select_file()),2,0,3)
         self.addToGrid(Label(self.tk,text="Name"),3,0)
         self.addToGridRemember("name",Text(self.tk,height=3),3,1)
         self.addToGrid(Label(self.tk,text="Logo URL"),4,0)
@@ -55,33 +55,7 @@ class WindowClass:
 
     def select_file(self):
         file = filedialog.askopenfile(title='Open a file',initialdir='/',filetypes=(('tsv', '*.tsv'),('All files', '*.*')))
-        data = open(file.name,encoding="utf-8").read().split("\n")
-        for i in data:
-            if i.startswith("Name of Organization"):
-                continue
-            i = i.split('\t')
-            if len(i) == 1:
-                continue
-            #Name of Organization,Interest Area,Desc,picture url,website,college/company/military,Completed?,On Website
-            #0 Name, 3 Logo URL, 4 Website, 2 Desc, 1 Interests, 5 Type
-            tempdata=[]
-            tempdata.append(i[0])
-            tempdata.append(i[3])
-            tempdata.append(i[4])
-            tempdata.append(i[2])
-            for interest in i[1].split(","):
-                if interest == "x":
-                    continue
-                tempdata.append(interest)
-            self.type.set(i[5])
-            print(tempdata)
-            for j in range(len(tempdata)):
-                try:
-                    self.remember[j][1].delete( 1.0, "end")
-                    self.remember[j][1].insert("end",tempdata[j])
-                except:
-                    pass
-            break
+        self.firebase.uploadCSV(file.name)
 
     def newWindow(self,fun):
         self.remember = []
@@ -93,12 +67,12 @@ class WindowClass:
     def select(self,evt):
         #https://www.geeksforgeeks.org/how-to-create-a-pop-up-message-when-a-button-is-pressed-in-python-tkinter/
         if messagebox.askyesno(title="Are you sure?",message=f"Delete {evt.widget.get(evt.widget.curselection()[0])}?"):
-            FirebaseClass.delItemFromIndex(evt.widget.curselection()[0])
+            self.firebase.delItemFromIndex(evt.widget.curselection()[0])
             self.newWindow(self.showItems)
 
     def showItems(self):
         #https://www.tutorialspoint.com/python/tk_listbox.htm
-        items = FirebaseClass.getItems()
+        items = self.firebase.getItems()
         listBar = Listbox(self.tk,width=70,height=35)
         for i in items:
             listBar.insert("end",i)
