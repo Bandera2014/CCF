@@ -109,16 +109,21 @@ function addinterest(intrest) {
         // if no resalts are found then show this page saying try anouther search
         if (content===false){
             document.getElementById("body-output").innerHTML ="<h1 style=color:grey>Sorry nothing found with that search.</h1><img width=15% src=https://creazilla-store.fra1.digitaloceanspaces.com/cliparts/1410400/rubber-duck-clipart-xl.png>";
-
+        
+        
+        
+        
+        
+        
             // addCard(items[])
-        // window.open("https://"+document.getElementById("ui").value+".github.io/", '_blank')
-    }
+            // window.open("https://"+document.getElementById("ui").value+".github.io/", '_blank')
+        }
     });
-
-
-// if(document.getElementById("ui").value.toLowerCase() == "nathan"){window.open("https://natebrant.github.io/", '_blank');}
-
+    
+    // if(document.getElementById("ui").value.toLowerCase() == "nathan"){window.open("https://natebrant.github.io/", '_blank');}
+    
 }
+
 
 
 //run addAll() by default
@@ -130,11 +135,16 @@ document.getElementById("allbutton").onclick = function () { addAll() };
 document.getElementById("collegesbutton").onclick = function () { addColleges() };
 document.getElementById("companiesbutton").onclick = function () { addCompanies() };
 document.getElementById("militarybutton").onclick = function () { addMilitary() };
-document.getElementById("Construction").onclick = function () { addinterest("Construction") };
-document.getElementById("Engineering").onclick = function () { addinterest("Engineering") };
 document.getElementById("Manufacturing").onclick = function () { addinterest("Manufacturing") };
-document.getElementById("Healthsciences").onclick = function () { addinterest("Health Sciences") };
+document.getElementById("Transportation").onclick = function () { addinterest("Transportation") };
+document.getElementById("Engineering").onclick = function () { addinterest("Engineering") };
+document.getElementById("HealthSciences").onclick = function () { addinterest("Health Sciences") };
+document.getElementById("Communication").onclick = function () { addinterest("Communication") };
+document.getElementById("PublicSafety").onclick = function () { addinterest("Public Safety") };
+document.getElementById("CulinaryArts").onclick = function () { addinterest("Culinary Arts") };
+document.getElementById("Construction").onclick = function () { addinterest("Construction") };
 document.getElementById("ComputerTechnology").onclick = function () { addinterest("Computer Technology") };
+document.getElementById("AnimalScience/Agriculture").onclick = function () { addinterest("Animal Science/Agriculture") };
 document.getElementById("search").onclick = function () { addinterest((document.getElementById("ui").value).toLowerCase())};
 
 
@@ -215,6 +225,7 @@ async function addCard(l) {
     // document.onclick=sortInterest(1)
 }
 
+
 // jquerry to add function to a button that shows up when you scroll down a bit that wil take you back to the top of the screen
 $(window).scroll(function() {
     if ($(this).scrollTop() >= 50) {       
@@ -223,8 +234,18 @@ $(window).scroll(function() {
         $('.return-to-top').fadeOut(250);  
     }
 });
-$('.return-to-top').click(function() {      
+$('.return-to-top').click(function() {      //add an animation to return back to the top of the screen
     $('body,html').animate({
         scrollTop : 0                       
     }, 100);
 });
+
+// when ?search= is entered after the url it is loaded into the search bar and automatically searched.
+// this is used by the map
+var search = document.URL.split("?search=")[1]
+if (search != undefined) {
+    search = decodeURI(search)
+    document.getElementById("ui").value = search
+    addinterest((document.getElementById("ui").value).toLowerCase())
+    
+}

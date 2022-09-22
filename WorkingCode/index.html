@@ -3,9 +3,7 @@
 <html>
 
 <head>
-    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"/>
-
-
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" />
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -39,10 +37,13 @@
             <!-- <li class="nav-item">
                 <h5 style="padding-right:10px;">Filter:</h5>
             </li> -->
-            
+
             <!--pulls the buttons in the top right corner and depending on which button is pressed will call the class from the js file to organize it-->
             <li class="nav-item" style="padding-right:10px;">
                 <button class="btn btn-secondary" id="allbutton">All</button>
+            </li>
+            <li class="nav-item" style="padding-right:10px;">
+                <a class="dropbtn2" href="mapView.html" style="text-decoration:none; background-color: green;">Map View</a>
             </li>
             <li class="nav-item" style="padding-right:10px;">
                 <div class="dropdown">
@@ -50,35 +51,31 @@
                     <div class="dropdown-content">
                         <a class=" " id="collegesbutton">Colleges</a>
                         <a class=" " id="companiesbutton">Companies</a>
-                        <a class=""  id="militarybutton">Military</a>
+                        <a class="" id="militarybutton">Military</a>
                     </div>
                 </div>
             </li>
-            <!-- <li class="nav-item" style="padding-right:10px;">
-                <button class="btn btn-danger" id="collegesbutton">Colleges</button>
-            </li>
-            <li class="nav-item" style="padding-right:10px;">
-                <button class="btn btn-primary" id="companiesbutton">Companies</button>
-            </li>
-            <li class="nav-item" style="padding-right:10px;">
-                <button class="btn btn-success" id="militarybutton">Military</button>
-            </li> -->
             <li class="nav-item" style="padding-right:10px;">
                 <div class="dropdown">
                     <button class="dropbtn">Interests <i class="fa fa-caret-down"></i></button>
                     <div class="dropdown-content">
-                        <a  id="Construction">Construction</a>
-                        <a  id="Engineering">Engineering</a>
-                        <a  id="Manufacturing">Manufacturing</a>
-                        <a  id="Healthsciences">Health sciences</a>
-                        <a  id="ComputerTechnology">Computer Technology</a>
+                        <a id="Manufacturing">Manufacturing</a>
+                        <a id="Transportation">Transportation</a>
+                        <a id="Engineering">Engineering</a>
+                        <a id="HealthSciences">Health Sciences</a>
+                        <a id="Communication">Communication</a>
+                        <a id="PublicSafety">Public Safety</a>
+                        <a id="CulinaryArts">Culinary Arts</a>
+                        <a id="Construction">Construction</a>
+                        <a id="ComputerTechnology">Computer Technology</a>
+                        <a id="AnimalScience/Agriculture">Animal Science/Agriculture</a>
                     </div>
                 </div>
             </li>
-            <li>  <input type="text"  id="ui" placeholder="Search Interests,Names"></li>
+            <li> <input type="text" id="ui" placeholder="Search Interests,Names"></li>
             <li class="nav-item" style="padding-right:10px;">
-                
-                
+
+
                 <button id="search"><i class="fa fa-search fa-1x"></i></button>
             </li>
         </ul>
